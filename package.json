@@ -1,0 +1,30 @@
+{
+  "name": "employee-tracker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "jest --watch-all"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/labchild/employee-tracker.git"
+  },
+  "keywords": [
+    "express",
+    "mysql2",
+    "node.js"
+  ],
+  "author": "Lelah Bates Childs",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/labchild/employee-tracker/issues"
+  },
+  "homepage": "https://github.com/labchild/employee-tracker#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^8.2.0",
+    "jest": "^27.4.7",
+    "mysql2": "^2.3.3"
+  }
+}
