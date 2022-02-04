@@ -16,7 +16,7 @@ VALUES
 ('Sales Person', 45000, 3),
 ('Accountant', 60000, 4);
 
-INSERT INTO employee (fist_name, last_name, role_id, manager_id)
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES
 ('Natalie', 'Goodman', 1, NULL),
 ('Linzi', 'Oakley', 2, 1),
@@ -28,4 +28,4 @@ VALUES
 ('Yazmin', 'Cassidy', 8, 7),
 ('Anna-Marie', 'Andersen', 6, 7),
 ('Ezekial', 'Sampson', 7, 9),
-('Tanvir', 'Churchill', 7, 9)
+('Tanvir', 'Churchill', 7, 9);
