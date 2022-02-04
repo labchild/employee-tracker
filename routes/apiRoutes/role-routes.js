@@ -2,9 +2,9 @@ const router = require('express').Router();
 const cTable = require('console.table');
 const db = require('../../db/connection');
 
-// view all depts
+// view all roles
 router.get('/', (req, res) => {
-    const sql = `SELECT * FROM department`;
+    const sql = 'SELECT * FROM role';
 
     db.query(sql, (err, rows) => {
         if (err) {
@@ -12,18 +12,14 @@ router.get('/', (req, res) => {
             return;
         }
         console.table(rows);
-        res.json({
-            message: 'you made it!',
-            body: rows
-        });
+        return res.json(rows);
     })
-
 });
 
-// add new dept
+// add new role
 router.post('/', ({ body }, res) => {
-    const sql = `INSERT INTO department (_name) VALUES (?)`;
-    const params = [body._name];
+    const sql = 'INSERT INTO role (title, salary, department_id) VALUES (?,?,?)';
+    const params = [body.title, body.salary, body.department_id];
 
     db.query(sql, params, (err, result) => {
         if (err) {
