@@ -9,18 +9,39 @@ const {
 } = require('./src/prompts');
 
 async function showAllDepts() {
-    const result = await db.viewAllDepartments();
-    return result;
+    const result = await db.getAllDepartments();
+    return result.map(dept => {
+        let obj = { Name: dept._name };
+        return obj;
+    });
 };
 
 async function showAllRoles() {
-    const result = await db.viewAllRoles();
-    return result;
+    const result = await db.getAllRoles();
+    return result.map(role => {
+        let obj = {
+            Title: role.title,
+            Salary: role.salary,
+            Dept: role._name
+        };
+        return obj;
+    });
 };
 
 async function showAllEmployees() {
-    const result = await db.viewAllEmployees();
-    return result;
+    const result = await db.getAllEmployees();
+    return result.map(employee => {
+        let obj = {
+            First_Name: employee.first_name,
+            Last_Name: employee.last_name,
+            ID: employee.employee_id,
+            Title: employee.title,
+            Dept: employee.dept,
+            Salary: employee.salary,
+            Manager: employee.manager
+        };
+        return obj;
+    });
 };
 
 const addNewDept = () => {
@@ -69,7 +90,52 @@ const updateEmployeeRole = () => {
     return mainMenu(menu);
 }
 
+// main menu
 const mainMenu = (questions) => {
+    return inquirer.prompt(questions)
+        .then(answer => {
+            let userChoice = answer.menu;
+
+            switch (userChoice) {
+                case 'allDept':
+                    showAllDepts().then(data => {
+                        console.table('Departments', data);
+                        mainMenu(menu);
+                    });
+                    break;
+                case 'allRoles':
+                    showAllRoles().then(data => {
+                        console.table('Employee Roles', data);
+                        mainMenu(menu);
+                    });
+                    break;
+                case 'allEmployees':
+                    showAllEmployees().then(data => {
+                        console.table('Employees', data);
+                        mainMenu(menu);
+                    });
+                    break;
+                case 'addDept':
+                    addNewDept();
+                    break;
+                case 'addRole':
+                    addNewRole();
+                    break;
+                case 'addEmployee':
+                    addNewEmployee();
+                    break;
+                case 'updateEmployeeRole':
+                    updateEmployeeRole();
+                    break;
+                case 'exitApp':
+                    return process.kill(process.pid, 'SIGTERM');
+            }
+        })
+        .catch(err => console.log(err));
+};
+
+// start app
+const init = () => {
     console.log(`
     ======================================================
                Welcome to your Employee Tracker
@@ -77,50 +143,10 @@ const mainMenu = (questions) => {
      Keep track of employees with your own local database
     ======================================================
     `);
-    return inquirer.prompt(questions);
+    // call menu
+    mainMenu(menu);
 };
 
-// start app
- 
-mainMenu(menu)
-    .then(answer => {
-        let userChoice = answer.menu;
-
-        switch (userChoice) {
-            case 'allDept':
-                showAllDepts().then(data => {
-                    console.table(data);
-                    mainMenu(menu);
-                });
-                break;
-            case 'allRoles':
-                db.viewAllRoles().then(data => {
-                    console.table(data);
-                    mainMenu(menu);
-                });
-                break;
-            case 'allEmployees':
-                db.viewAllEmployees().then(data => {
-                    console.table(data);
-                    mainMenu(menu);
-                });
-                break;
-            case 'addDept':
-                addNewDept();
-                break;
-            case 'addRole':
-                addNewRole();
-                break;
-            case 'addEmployee':
-                addNewEmployee();
-                break;
-            case 'updateEmployeeRole':
-                updateEmployeeRole();
-                break;
-            case 'exitApp':
-                return process.exit;
-        }
-    })
-    .catch(err => console.log(err));
+init();
 
 // db.addDepartment({ _name:'Lelah' }).then(result => console.log(result));

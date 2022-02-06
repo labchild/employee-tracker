@@ -2,7 +2,7 @@ const db = require("../lib/DB");
 
 async function getDeptList() {
     let departments = ['No department'];
-    const result = await db.viewAllDepartments();
+    const result = await db.getAllDepartments();
     result.forEach(dept => {
         let obj = {
             id: dept.id,
@@ -120,7 +120,7 @@ const rolePrompts = [
     },
     {
         type:'rawlist',
-        name: 'department_id',
+        name: 'dept_id',
         message: 'Which department does this role belong to?',
         choices: getDeptList()
     }
