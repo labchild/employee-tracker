@@ -23,7 +23,7 @@ router.post('/', ({ body }, res) => {
         body.first_name,
         body.last_name,
         body.role_id,
-        body.department_id
+        body.manager_id
     ];
 
     db.query(sql, params, (err, result) => {
