@@ -8,11 +8,8 @@ VALUES
 INSERT INTO role (title, salary, dept_id)
 VALUES
 ('Manager', 100000, NULL),
-('Project Manager', 90000, 1),
 ('Engineer', 80000, 1),
-('Art Director', 80000, 2),
 ('Designer', 60000, 2),
-('Account Manager', 60000, 3),
 ('Sales Person', 45000, 3),
 ('Accountant', 60000, 4);
 
@@ -25,7 +22,7 @@ VALUES
 ('Elias', 'Griffin', 4, 1),
 ('Cian', 'Bullock', 5, 5),
 ('Louisa', 'Kaur', 1, NULL),
-('Yazmin', 'Cassidy', 8, 7),
-('Anna-Marie', 'Andersen', 6, 7),
-('Ezekial', 'Sampson', 7, 9),
-('Tanvir', 'Churchill', 7, 9);
+('Yazmin', 'Cassidy', 2, 7),
+('Anna-Marie', 'Andersen', 2, 7),
+('Ezekial', 'Sampson', 4, 9),
+('Tanvir', 'Churchill', 5, 9);

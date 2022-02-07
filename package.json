@@ -12,9 +12,10 @@
     "url": "git+https://github.com/labchild/employee-tracker.git"
   },
   "keywords": [
-    "express",
     "mysql2",
-    "node.js"
+    "node.js",
+    "inquirer",
+    "console.table"
   ],
   "author": "Lelah Bates Childs",
   "license": "MIT",

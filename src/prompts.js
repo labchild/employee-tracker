@@ -1,34 +1,6 @@
 const inquirer = require("inquirer");
 const db = require("../lib/DB");
 
-async function getDeptList() {
-    let departments = [];
-    let result = await db.getAllDepartments();
-    result.map(dept => {
-        let obj = {
-            value: dept.dept_id,
-            name: dept._name
-        };
-        departments.push(obj);
-    });
-
-    return departments;
-};
-
-async function getRoleList() {
-    let roles = ['No title'];
-    const result = await db.viewAllRoles();
-    result.forEach(role => {
-        let obj = {
-            id: role.id,
-            title: role.title
-        };
-        roles.push(obj);
-    });
-
-    return roles;
-}
-
 const menu = [
     {
         type: 'list',
@@ -97,14 +69,14 @@ const departmentPrompts = () => {
 };
 
 const rolePrompts = async () => {
-    let depts = [];
+    // get depts from db
     let result = await db.getAllDepartments();
-    result.map(dept => {
+    let depts = result.map(dept => {
         let obj = {
             value: dept.dept_id,
             name: dept._name
         };
-        depts.push(obj);
+        return obj;
     });
 
     let prompts = [
@@ -133,7 +105,7 @@ const rolePrompts = async () => {
             }
         },
         {
-            type: 'rawlist',
+            type: 'list',
             name: 'dept_id',
             message: 'Which department does this role belong to?',
             choices: depts
@@ -144,30 +116,31 @@ const rolePrompts = async () => {
 };
 
 const employeePrompts = async () => {
-    // arrays for inquirer choices from db
-    let roles = [];
-    let employees = [];
-
-    // get roles from db, ppush to roles arr for role choices
-    const titles = await db.viewAllRoles();
-    titles.map(role => {
+    // get roles from db, makes roles arr for role choices
+    const titles = await db.getAllRoles();
+    let roles = titles.map(role => {
         let obj = {
             value: role.role_id,
             name: role.title
         };
-        roles.push(obj);
+        return obj;
     });
 
-    // get employees from db, push to employess arr for manager choices
+    // get employees from db, create managers arr for manager choices
     const people = await db.getAllEmployees();
-    people.map(person => {
+    let managers = people.filter(person => person.title === 'Manager').map(manager => {
         let obj = {
-            value: person.employee_id,
-            name: `${person.first_name} ${person.last_name}`
-        }
-        employees.push(obj);
+            value: manager.employee_id,
+            name: `${manager.first_name} ${manager.last_name}`
+        };
+        return obj;
     });
-    
+
+    managers.push({
+        value: null,
+        name: 'N/A'
+    });
+
     // create employee questions
     let prompts = [
         {
@@ -195,26 +168,66 @@ const employeePrompts = async () => {
             }
         },
         {
-            type: 'rawlist',
+            type: 'list',
             name: 'role_id',
             message: "What is the employee's title?",
-            choices: ['w']//getRoleList
+            choices: roles
         },
         {
-            type: 'rawlist',
+            type: 'list',
             name: 'manager_id',
             message: "Who is the employee's manager?",
-            choices: ['w']//get employee list
+            choices: managers
         }
     ];
 
     return inquirer.prompt(prompts);
 }
 
+const updateEmpRolePrompts = async () => {
+    // get employees for update choices
+    const people = await db.getAllEmployees();
+    let employees = people.map(person => {
+        let obj = {
+            value: person.employee_id,
+            name: `${person.first_name} ${person.last_name}`
+        };
+        return obj;
+    });
+
+    // get roles for new role choices
+    const titles = await db.getAllRoles();
+    let roles = titles.map(title => {
+        let obj = {
+            value: title.role_id,
+            name: title.title
+        };
+        return obj;
+    });
+
+    // create prompts
+    let prompts = [
+        {
+            type: 'rawlist',
+            name: 'employee_id',
+            message: 'Which employee would you like to update?',
+            choices: employees
+        },
+        {
+            type: 'list',
+            name: 'role_id',
+            message: 'What is their new title?',
+            choices: roles
+        }
+    ];
+
+    return inquirer.prompt(prompts);
+}
 
 module.exports = {
     menu,
     departmentPrompts,
     rolePrompts,
-    employeePrompts
+    employeePrompts,
+    updateEmpRolePrompts
 };

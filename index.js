@@ -5,7 +5,8 @@ const {
     menu,
     departmentPrompts,
     rolePrompts,
-    employeePrompts
+    employeePrompts,
+    updateEmpRolePrompts
 } = require('./src/prompts');
 const myError = () => {
     console.log(`
@@ -86,27 +87,44 @@ const addNewRole = () => {
 };
 
 const addNewEmployee = () => {
-    return inquirer.prompt(employeePrompts)
+    return employeePrompts()
         .then(newEmployee => {
             return db.addEmployee(newEmployee);
         })
         .then(result => {
             if (!result.affectedRows) {
-                console.log('Something went wrong!');
+                myError();
                 return mainMenu(menu);
             }
-            console.log('Employee added!');
+            console.log(result.message);
             return mainMenu(menu);
         })
 };
 
 const updateEmployeeRole = () => {
-    console.log('updating...');
-    return mainMenu(menu);
-}
+    return updateEmpRolePrompts()
+        .then(updatedEmployee => {
+            return db.updateEmployeeRole(updatedEmployee);
+        })
+        .then(result => {
+            // if nothing happened, tell user and return to menu
+            if (!result.affectedRows) {
+                myError();
+                return mainMenu(menu);
+            }
+            // tell user update is success, return menu
+            console.log(result.message);
+            return mainMenu(menu);
+        })
+};
 
 // main menu
 const mainMenu = (questions) => {
+    console.log(`
+    
+          Menu  
+         ¯¯¯¯¯¯
+    `)
     return inquirer.prompt(questions)
         .then(answer => {
             let userChoice = answer.menu;
@@ -163,6 +181,6 @@ const init = () => {
 };
 
 init();
-
+//db.updateEmployeeRole({ employee_id: 13, role_id: 5 }).then(result => console.log(result));
 //getDeptList().then(result => console.log(result));
 // db.addDepartment({ _name:'Lelah' }).then(result => console.log(result));
