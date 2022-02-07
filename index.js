@@ -7,7 +7,8 @@ const {
     rolePrompts,
     employeePrompts,
     updateEmpRolePrompts,
-    updateEmpManagerPrompts
+    updateEmpManagerPrompts,
+    byManagerPrompts
 } = require('./src/prompts');
 const myError = () => {
     console.log(`
@@ -18,6 +19,7 @@ const space = `
 
 `;
 
+// view records
 async function showAllDepts() {
     const result = await db.getAllDepartments();
     return result.map(dept => {
@@ -40,20 +42,17 @@ async function showAllRoles() {
 
 async function showAllEmployees() {
     const result = await db.getAllEmployees();
-    return result.map(employee => {
-        let obj = {
-            First_Name: employee.first_name,
-            Last_Name: employee.last_name,
-            ID: employee.employee_id,
-            Title: employee.title,
-            Dept: employee.dept,
-            Salary: employee.salary,
-            Manager: employee.manager
-        };
-        return obj;
-    });
+    return result;
 };
 
+const showEmployeesByMananger = async () => {
+    const answer = await byManagerPrompts();
+    const teamList = await db.getEmployeesByManager(answer);
+
+    return teamList;
+};
+
+// add records
 const addNewDept = () => {
     // capture user data, send to db
     return departmentPrompts()
@@ -91,21 +90,26 @@ const addNewRole = () => {
 };
 
 const addNewEmployee = () => {
+    // capture user data and return data to db
     return employeePrompts()
         .then(newEmployee => {
             return db.addEmployee(newEmployee);
         })
         .then(result => {
+            // is failed, tell the user and send to menu
             if (!result.affectedRows) {
                 myError();
                 return mainMenu(menu);
             }
+            // is success, tell user and send to menu
             console.log(result.message);
             return mainMenu(menu);
         })
 };
 
+// update records
 const updateEmployeeRole = () => {
+    // capture user data and send to db
     return updateEmpRolePrompts()
         .then(updatedEmployee => {
             return db.updateEmployeeRole(updatedEmployee);
@@ -123,13 +127,19 @@ const updateEmployeeRole = () => {
 };
 
 const updateManager = () => {
+    // capture user data and send to db
     return updateEmpManagerPrompts()
         .then(updatedEmployee => {
-            console.log(updatedEmployee);
             return db.updateEmployeeManager(updatedEmployee);
         })
         .then(result => {
-            console.log(result);
+            // if nothing happened, tell user and return to menu
+            if (!result.affectedRows) {
+                myError();
+                return mainMenu(menu);
+            }
+            // tell user update is success, return menu
+            console.log(result.message);
             return mainMenu(menu);
         })
 };
@@ -167,6 +177,13 @@ const mainMenu = (questions) => {
                         mainMenu(menu);
                     });
                     break;
+                case 'employeesByManager':
+                    showEmployeesByMananger().then(data => {
+                        console.log(space);
+                        console.table(data);
+                        return mainMenu(menu);
+                    })
+                    break;
                 case 'addDept':
                     addNewDept();
                     break;
@@ -203,4 +220,5 @@ const init = () => {
 };
 
 init();
+//db.getEmployeesByManager({ manager_id: 7 }).then(result => console.log(result))
 //db.getManagers().then(result => console.log(result));

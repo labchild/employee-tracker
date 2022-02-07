@@ -23,6 +23,11 @@ const menu = [
                 short: 'Showing all employees'
             },
             {
+                name: 'View Employees by Manager',
+                value: 'employeesByManager',
+                short: 'Getting managers'
+            },
+            {
                 name: 'Add a Department',
                 value: 'addDept',
                 short: 'Adding a new department'
@@ -269,11 +274,35 @@ const updateEmpManagerPrompts = async () => {
     return inquirer.prompt(prompts);
 };
 
+const byManagerPrompts = async () => {
+    // get mnagers for choices
+    const bosses = await db.getManagers();
+    let managers = bosses.map(person => {
+        let obj = {
+            value: person.employee_id,
+            name: person.Name 
+        };
+        return obj;
+    });
+
+    let prompts = [
+        {
+            type:'list',
+            name:'manager_id',
+            message: "Which manager's team would you like to see?",
+            choices: managers
+        }
+    ];
+
+    return inquirer.prompt(prompts);
+}
+
 module.exports = {
     menu,
     departmentPrompts,
     rolePrompts,
     employeePrompts,
     updateEmpRolePrompts,
-    updateEmpManagerPrompts
+    updateEmpManagerPrompts,
+    byManagerPrompts
 };
