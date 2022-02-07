@@ -43,6 +43,11 @@ const menu = [
                 short: 'Updatng an employee'
             },
             {
+                name: "Update an Employee's Manager",
+                value: 'updateManager',
+                short: 'Updatng an employee'
+            },
+            {
                 name: 'Exit',
                 value: 'exitApp',
                 short: 'Bye!'
@@ -208,7 +213,7 @@ const updateEmpRolePrompts = async () => {
     // create prompts
     let prompts = [
         {
-            type: 'rawlist',
+            type: 'list',
             name: 'employee_id',
             message: 'Which employee would you like to update?',
             choices: employees
@@ -222,12 +227,53 @@ const updateEmpRolePrompts = async () => {
     ];
 
     return inquirer.prompt(prompts);
-}
+};
+
+const updateEmpManagerPrompts = async () => {
+    // get employees for update choices
+    const people = await db.getAllEmployees();
+    let employees = people.map(person => {
+        let obj = {
+            value: person.employee_id,
+            name: `${person.first_name} ${person.last_name}`
+        };
+        return obj;
+    });
+
+    // get roles for new role choices
+    const bosses = await db.getManagers();
+    let managers = bosses.map(person => {
+        let obj = {
+            value: person.employee_id,
+            name: person.Name 
+        };
+        return obj;
+    });
+
+    // create prompts
+    let prompts = [
+        {
+            type: 'list',
+            name: 'employee_id',
+            message: 'Which employee would you like to update?',
+            choices: employees
+        },
+        {
+            type: 'list',
+            name: 'manager_id',
+            message: 'Who is their new manager?',
+            choices: managers
+        }
+    ];
+
+    return inquirer.prompt(prompts);
+};
 
 module.exports = {
     menu,
     departmentPrompts,
     rolePrompts,
     employeePrompts,
-    updateEmpRolePrompts
+    updateEmpRolePrompts,
+    updateEmpManagerPrompts
 };

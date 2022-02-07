@@ -6,7 +6,8 @@ const {
     departmentPrompts,
     rolePrompts,
     employeePrompts,
-    updateEmpRolePrompts
+    updateEmpRolePrompts,
+    updateEmpManagerPrompts
 } = require('./src/prompts');
 const myError = () => {
     console.log(`
@@ -121,6 +122,18 @@ const updateEmployeeRole = () => {
         })
 };
 
+const updateManager = () => {
+    return updateEmpManagerPrompts()
+        .then(updatedEmployee => {
+            console.log(updatedEmployee);
+            return db.updateEmployeeManager(updatedEmployee);
+        })
+        .then(result => {
+            console.log(result);
+            return mainMenu(menu);
+        })
+};
+
 // main menu
 const mainMenu = (questions) => {
     console.log(`
@@ -166,6 +179,9 @@ const mainMenu = (questions) => {
                 case 'updateEmployeeRole':
                     updateEmployeeRole();
                     break;
+                case 'updateManager':
+                    updateManager();
+                    break;
                 case 'exitApp':
                     return process.kill(process.pid, 'SIGTERM');
             }
@@ -187,6 +203,4 @@ const init = () => {
 };
 
 init();
-//db.updateEmployeeRole({ employee_id: 13, role_id: 5 }).then(result => console.log(result));
-//getDeptList().then(result => console.log(result));
-// db.addDepartment({ _name:'Lelah' }).then(result => console.log(result));
+//db.getManagers().then(result => console.log(result));
