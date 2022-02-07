@@ -1,11 +1,12 @@
+const inquirer = require("inquirer");
 const db = require("../lib/DB");
 
 async function getDeptList() {
-    let departments = ['No department'];
-    const result = await db.getAllDepartments();
-    result.forEach(dept => {
+    let departments = [];
+    let result = await db.getAllDepartments();
+    result.map(dept => {
         let obj = {
-            id: dept.id,
+            value: dept.dept_id,
             name: dept._name
         };
         departments.push(obj);
@@ -78,92 +79,137 @@ const menu = [
     }
 ];
 
-const departmentPrompts = [
-    {
-        type: 'input',
-        name: '_name',
-        message: "Enter the name of the department you'd like to add.",
-        validate: deptInput => {
-            if (!deptInput) {
-                console.log('The new department still needs a name.');
-                return false;
+const departmentPrompts = () => {
+    return inquirer.prompt([
+        {
+            type: 'input',
+            name: '_name',
+            message: "Enter the name of the department you'd like to add.",
+            validate: deptInput => {
+                if (!deptInput) {
+                    console.log('The new department still needs a name.');
+                    return false;
+                }
+                return true;
             }
-            return true;
         }
-    }
-];
+    ]);
+};
 
-const rolePrompts = [
-    {
-        type: 'input',
-        name: 'title',
-        message: 'What is the title of this new role?',
-        validate: titleInput => {
-            if (!titleInput) {
-                console.log('You must enter a title!');
-                return false;
-            }
-            return true;
-        }
-    },
-    {
-        type: 'input',
-        name: 'salary',
-        message: 'Enter the salary (do not include commas, decimals, or $).',
-        validate: salaryInput => {
-            if (!salaryInput || isNaN(salaryInput)) {
-                console.log('Enter a valid number (using only numbers).');
-                return false;
-            }
-            return true;
-        }
-    },
-    {
-        type:'rawlist',
-        name: 'dept_id',
-        message: 'Which department does this role belong to?',
-        choices: getDeptList()
-    }
-];
+const rolePrompts = async () => {
+    let depts = [];
+    let result = await db.getAllDepartments();
+    result.map(dept => {
+        let obj = {
+            value: dept.dept_id,
+            name: dept._name
+        };
+        depts.push(obj);
+    });
 
-const employeePrompts = [
-    {
-        type: 'input',
-        name: 'first_name',
-        message: "Enter the new employee's first name.",
-        validate: nameInput => {
-            if (!nameInput) {
-                console.log("Enter the new employee's first name. (Required)");
-                return false;
+    let prompts = [
+        {
+            type: 'input',
+            name: 'title',
+            message: 'What is the title of this new role?',
+            validate: titleInput => {
+                if (!titleInput) {
+                    console.log('You must enter a title!');
+                    return false;
+                }
+                return true;
             }
-            return true;
-        }
-    },
-    {
-        type:'input',
-        name:'last_name',
-        message: "Enter the new employee's last name.",
-        validate: nameInput => {
-            if (!nameInput) {
-                console.log("Enter the new employee's last name. (Required)");
-                return false;
+        },
+        {
+            type: 'input',
+            name: 'salary',
+            message: 'Enter the salary (do not include commas, decimals, or $).',
+            validate: salaryInput => {
+                if (!salaryInput || isNaN(salaryInput)) {
+                    console.log('Enter a valid number (using only numbers).');
+                    return false;
+                }
+                return true;
             }
-            return true;
+        },
+        {
+            type: 'rawlist',
+            name: 'dept_id',
+            message: 'Which department does this role belong to?',
+            choices: depts
         }
-    },
-    {
-        type:'rawlist',
-        name:'role_id',
-        message: "What is the employee's title?",
-        choices: getRoleList
-    },
-    {
-        type: 'rawlist',
-        name: 'manager_id',
-        message:"Who is the employee's manager?",
-        choices: getDeptList
-    }
-];
+    ];
+
+    return inquirer.prompt(prompts);
+};
+
+const employeePrompts = async () => {
+    // arrays for inquirer choices from db
+    let roles = [];
+    let employees = [];
+
+    // get roles from db, ppush to roles arr for role choices
+    const titles = await db.viewAllRoles();
+    titles.map(role => {
+        let obj = {
+            value: role.role_id,
+            name: role.title
+        };
+        roles.push(obj);
+    });
+
+    // get employees from db, push to employess arr for manager choices
+    const people = await db.getAllEmployees();
+    people.map(person => {
+        let obj = {
+            value: person.employee_id,
+            name: `${person.first_name} ${person.last_name}`
+        }
+        employees.push(obj);
+    });
+    
+    // create employee questions
+    let prompts = [
+        {
+            type: 'input',
+            name: 'first_name',
+            message: "Enter the new employee's first name.",
+            validate: nameInput => {
+                if (!nameInput) {
+                    console.log("Enter the new employee's first name. (Required)");
+                    return false;
+                }
+                return true;
+            }
+        },
+        {
+            type: 'input',
+            name: 'last_name',
+            message: "Enter the new employee's last name.",
+            validate: nameInput => {
+                if (!nameInput) {
+                    console.log("Enter the new employee's last name. (Required)");
+                    return false;
+                }
+                return true;
+            }
+        },
+        {
+            type: 'rawlist',
+            name: 'role_id',
+            message: "What is the employee's title?",
+            choices: ['w']//getRoleList
+        },
+        {
+            type: 'rawlist',
+            name: 'manager_id',
+            message: "Who is the employee's manager?",
+            choices: ['w']//get employee list
+        }
+    ];
+
+    return inquirer.prompt(prompts);
+}
 
 
 module.exports = {

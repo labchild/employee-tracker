@@ -7,6 +7,11 @@ const {
     rolePrompts,
     employeePrompts
 } = require('./src/prompts');
+const myError = () => {
+    console.log(`
+        Something went wrong...
+    `);
+};
 
 async function showAllDepts() {
     const result = await db.getAllDepartments();
@@ -45,27 +50,37 @@ async function showAllEmployees() {
 };
 
 const addNewDept = () => {
-    return inquirer.prompt(departmentPrompts)
+    // capture user data, send to db
+    return departmentPrompts()
         .then(newDept => {
             return db.addDepartment(newDept);
         }).then(result => {
-            if (!result) {
-                console.log(`
-                Something went wrong...
-                `);
+            // if not add, notify user and return menu
+            if (!result.affectedRows) {
+                myError();
                 return mainMenu(menu);
             }
-            console.log(`
-            Department added.
-            `);
+            // notify user add is success, return to menu
+            console.log(result.message);
             return mainMenu(menu);
         })
 };
 
+
 const addNewRole = () => {
-    return inquirer.prompt(rolePrompts)
+    // capture user data, add to db
+    return rolePrompts()
         .then(newRole => {
-            db.addRole(newRole);
+            return db.addRole(newRole);
+        })
+        .then(result => {
+            // if not added, error and send back to menu
+            if (!result.affectedRows) {
+                myError();
+                return mainMenu(menu);
+            }
+            // tell user add was success, return menu
+            console.log(result.message);
             return mainMenu(menu);
         })
 };
@@ -149,4 +164,5 @@ const init = () => {
 
 init();
 
+//getDeptList().then(result => console.log(result));
 // db.addDepartment({ _name:'Lelah' }).then(result => console.log(result));
