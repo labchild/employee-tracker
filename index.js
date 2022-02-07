@@ -8,7 +8,8 @@ const {
     employeePrompts,
     updateEmpRolePrompts,
     updateEmpManagerPrompts,
-    byManagerPrompts
+    byManagerPrompts,
+    byDeptPrompts
 } = require('./src/prompts');
 const myError = () => {
     console.log(`
@@ -23,7 +24,7 @@ const space = `
 async function showAllDepts() {
     const result = await db.getAllDepartments();
     return result.map(dept => {
-        let obj = { Name: dept._name };
+        let obj = { Name: dept.Name };
         return obj;
     });
 };
@@ -52,6 +53,14 @@ const showEmployeesByMananger = async () => {
     return teamList;
 };
 
+async function showEmployeesByDept() {
+    const answer = await byDeptPrompts();
+    console.log(answer);
+    const result = await db.getEmployeesByDept(answer);
+
+    return result;
+}
+
 // add records
 const addNewDept = () => {
     // capture user data, send to db
@@ -68,6 +77,10 @@ const addNewDept = () => {
             console.log(result.message);
             return mainMenu(menu);
         })
+        .catch(err => {
+            myError();
+            console.log(err)
+        });
 };
 
 
@@ -87,6 +100,10 @@ const addNewRole = () => {
             console.log(result.message);
             return mainMenu(menu);
         })
+        .catch(err => {
+            myError();
+            console.log(err)
+        });
 };
 
 const addNewEmployee = () => {
@@ -105,6 +122,10 @@ const addNewEmployee = () => {
             console.log(result.message);
             return mainMenu(menu);
         })
+        .catch(err => {
+            myError();
+            console.log(err)
+        });
 };
 
 // update records
@@ -124,6 +145,10 @@ const updateEmployeeRole = () => {
             console.log(result.message);
             return mainMenu(menu);
         })
+        .catch(err => {
+            myError();
+            console.log(err)
+        });
 };
 
 const updateManager = () => {
@@ -142,6 +167,10 @@ const updateManager = () => {
             console.log(result.message);
             return mainMenu(menu);
         })
+        .catch(err => {
+            myError();
+            console.log(err)
+        });
 };
 
 // main menu
@@ -180,10 +209,16 @@ const mainMenu = (questions) => {
                 case 'employeesByManager':
                     showEmployeesByMananger().then(data => {
                         console.log(space);
-                        console.table(data);
+                        console.table('Employees', data);
                         return mainMenu(menu);
                     })
                     break;
+                case 'employeesByDept':
+                    showEmployeesByDept().then(data => {
+                        console.log(space);
+                        console.table('Employees', data);
+                        return mainMenu(menu);
+                    })
                 case 'addDept':
                     addNewDept();
                     break;
@@ -203,7 +238,10 @@ const mainMenu = (questions) => {
                     return process.kill(process.pid, 'SIGTERM');
             }
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+            myError();
+            console.log(err)
+        });
 };
 
 // start app
@@ -220,5 +258,5 @@ const init = () => {
 };
 
 init();
-//db.getEmployeesByManager({ manager_id: 7 }).then(result => console.log(result))
-//db.getManagers().then(result => console.log(result));
+//showAllDepts().then(result => console.log(result))
+//db.getEmployeesByDept({ dept_id: 2 }).then(result => console.log(result));
