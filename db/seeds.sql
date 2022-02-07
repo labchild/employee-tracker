@@ -17,12 +17,12 @@ INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES
 ('Natalie', 'Goodman', 1, NULL),
 ('Linzi', 'Oakley', 2, 1),
-('Tasnia', 'Chadwick', 3, 2),
-('Bianca', 'Goddard', 3, 2),
+('Tasnia', 'Chadwick', 3, 1),
+('Bianca', 'Goddard', 3, 1),
 ('Elias', 'Griffin', 4, 1),
-('Cian', 'Bullock', 5, 5),
+('Cian', 'Bullock', 5, 1),
 ('Louisa', 'Kaur', 1, NULL),
 ('Yazmin', 'Cassidy', 2, 7),
 ('Anna-Marie', 'Andersen', 2, 7),
-('Ezekial', 'Sampson', 4, 9),
-('Tanvir', 'Churchill', 5, 9);
+('Ezekial', 'Sampson', 4, 7),
+('Tanvir', 'Churchill', 5, 7);

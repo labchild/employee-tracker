@@ -6,18 +6,25 @@ const {
     departmentPrompts,
     rolePrompts,
     employeePrompts,
-    updateEmpRolePrompts
+    updateEmpRolePrompts,
+    updateEmpManagerPrompts,
+    byManagerPrompts,
+    byDeptPrompts
 } = require('./src/prompts');
 const myError = () => {
     console.log(`
         Something went wrong...
     `);
 };
+const space = `
 
+`;
+
+// view records
 async function showAllDepts() {
     const result = await db.getAllDepartments();
     return result.map(dept => {
-        let obj = { Name: dept._name };
+        let obj = { Name: dept.Name };
         return obj;
     });
 };
@@ -36,20 +43,25 @@ async function showAllRoles() {
 
 async function showAllEmployees() {
     const result = await db.getAllEmployees();
-    return result.map(employee => {
-        let obj = {
-            First_Name: employee.first_name,
-            Last_Name: employee.last_name,
-            ID: employee.employee_id,
-            Title: employee.title,
-            Dept: employee.dept,
-            Salary: employee.salary,
-            Manager: employee.manager
-        };
-        return obj;
-    });
+    return result;
 };
 
+const showEmployeesByMananger = async () => {
+    const answer = await byManagerPrompts();
+    const teamList = await db.getEmployeesByManager(answer);
+
+    return teamList;
+};
+
+async function showEmployeesByDept() {
+    const answer = await byDeptPrompts();
+    console.log(answer);
+    const result = await db.getEmployeesByDept(answer);
+
+    return result;
+}
+
+// add records
 const addNewDept = () => {
     // capture user data, send to db
     return departmentPrompts()
@@ -65,6 +77,10 @@ const addNewDept = () => {
             console.log(result.message);
             return mainMenu(menu);
         })
+        .catch(err => {
+            myError();
+            console.log(err)
+        });
 };
 
 
@@ -84,24 +100,37 @@ const addNewRole = () => {
             console.log(result.message);
             return mainMenu(menu);
         })
+        .catch(err => {
+            myError();
+            console.log(err)
+        });
 };
 
 const addNewEmployee = () => {
+    // capture user data and return data to db
     return employeePrompts()
         .then(newEmployee => {
             return db.addEmployee(newEmployee);
         })
         .then(result => {
+            // is failed, tell the user and send to menu
             if (!result.affectedRows) {
                 myError();
                 return mainMenu(menu);
             }
+            // is success, tell user and send to menu
             console.log(result.message);
             return mainMenu(menu);
         })
+        .catch(err => {
+            myError();
+            console.log(err)
+        });
 };
 
+// update records
 const updateEmployeeRole = () => {
+    // capture user data and send to db
     return updateEmpRolePrompts()
         .then(updatedEmployee => {
             return db.updateEmployeeRole(updatedEmployee);
@@ -116,6 +145,32 @@ const updateEmployeeRole = () => {
             console.log(result.message);
             return mainMenu(menu);
         })
+        .catch(err => {
+            myError();
+            console.log(err)
+        });
+};
+
+const updateManager = () => {
+    // capture user data and send to db
+    return updateEmpManagerPrompts()
+        .then(updatedEmployee => {
+            return db.updateEmployeeManager(updatedEmployee);
+        })
+        .then(result => {
+            // if nothing happened, tell user and return to menu
+            if (!result.affectedRows) {
+                myError();
+                return mainMenu(menu);
+            }
+            // tell user update is success, return menu
+            console.log(result.message);
+            return mainMenu(menu);
+        })
+        .catch(err => {
+            myError();
+            console.log(err)
+        });
 };
 
 // main menu
@@ -132,22 +187,38 @@ const mainMenu = (questions) => {
             switch (userChoice) {
                 case 'allDept':
                     showAllDepts().then(data => {
+                        console.log(space);
                         console.table('Departments', data);
                         mainMenu(menu);
                     });
                     break;
                 case 'allRoles':
                     showAllRoles().then(data => {
+                        console.log(space);
                         console.table('Employee Roles', data);
                         mainMenu(menu);
                     });
                     break;
                 case 'allEmployees':
                     showAllEmployees().then(data => {
+                        console.log(space);
                         console.table('Employees', data);
                         mainMenu(menu);
                     });
                     break;
+                case 'employeesByManager':
+                    showEmployeesByMananger().then(data => {
+                        console.log(space);
+                        console.table('Employees', data);
+                        return mainMenu(menu);
+                    })
+                    break;
+                case 'employeesByDept':
+                    showEmployeesByDept().then(data => {
+                        console.log(space);
+                        console.table('Employees', data);
+                        return mainMenu(menu);
+                    })
                 case 'addDept':
                     addNewDept();
                     break;
@@ -160,11 +231,17 @@ const mainMenu = (questions) => {
                 case 'updateEmployeeRole':
                     updateEmployeeRole();
                     break;
+                case 'updateManager':
+                    updateManager();
+                    break;
                 case 'exitApp':
                     return process.kill(process.pid, 'SIGTERM');
             }
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+            myError();
+            console.log(err)
+        });
 };
 
 // start app
@@ -181,6 +258,5 @@ const init = () => {
 };
 
 init();
-//db.updateEmployeeRole({ employee_id: 13, role_id: 5 }).then(result => console.log(result));
-//getDeptList().then(result => console.log(result));
-// db.addDepartment({ _name:'Lelah' }).then(result => console.log(result));
+//showAllDepts().then(result => console.log(result))
+//db.getEmployeesByDept({ dept_id: 2 }).then(result => console.log(result));
