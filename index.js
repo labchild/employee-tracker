@@ -13,6 +13,9 @@ const myError = () => {
         Something went wrong...
     `);
 };
+const space = `
+
+`;
 
 async function showAllDepts() {
     const result = await db.getAllDepartments();
@@ -132,18 +135,21 @@ const mainMenu = (questions) => {
             switch (userChoice) {
                 case 'allDept':
                     showAllDepts().then(data => {
+                        console.log(space);
                         console.table('Departments', data);
                         mainMenu(menu);
                     });
                     break;
                 case 'allRoles':
                     showAllRoles().then(data => {
+                        console.log(space);
                         console.table('Employee Roles', data);
                         mainMenu(menu);
                     });
                     break;
                 case 'allEmployees':
                     showAllEmployees().then(data => {
+                        console.log(space);
                         console.table('Employees', data);
                         mainMenu(menu);
                     });
