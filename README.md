@@ -19,7 +19,7 @@ Employee Tracker is a Node.js CLI application that allows a company (user) to ma
 
 ## Installation
 ### Prerequisites
-This project requires [MySql](https://dev.mysql.com/downloads/mysql/) and [Node.js](). You can download and install these applications on their respective websites. For a handy step-by-step guide on installing MySQL, check out [this blog](https://coding-boot-camp.github.io/full-stack/mysql/mysql-installation-guide). Follow the instructions for your operating system.
+This project requires [MySql](https://dev.mysql.com/downloads/mysql/) and [Node.js](https://nodejs.dev/). You can download and install these applications on their respective websites. For a handy step-by-step guide on installing MySQL, check out [this blog](https://coding-boot-camp.github.io/full-stack/mysql/mysql-installation-guide). Follow the instructions for your operating system.
 
 ### Getting Started
 ##### 1 – Install the project
