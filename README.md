@@ -15,7 +15,7 @@ A command-line CMS to manage a company's employee database, using Node.js, Inqui
 * [Acknowledgements &#x2763;](#acknowledgements)
 
 ## Description
-
+Employee Tracker is a Node.js CLI application that allows a company (user) to manage their employee database easily. The app is called and entirely controlled from the CLI, but still easy for non-developers to use. It uses SQL to create, read, update, and delete the database and its records.
 
 ## Installation
 ### Prerequisites
