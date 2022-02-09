@@ -40,12 +40,15 @@ A video walkthrough of Employee Tracker is available [here](https://drive.google
 To launch Employee Tracker, navigate to the project root folder from your CLI. Run the command ``` npm start ``` or ``` node index.js ```.
 
 Select what you'd like to do from the menu. You can scroll through options with the up and down arrows (there may be more than listed, keep scrolling for additional options). Press ```Enter``` to select that option.
+
 <img src="./src/images/launch-preview.png" width="350" />
 
 If you selected a "View" option, the records requested will be displayed and you'll be sent back to the main menu.
+
 <img src="./src/images/view-preview.png" width="400" />
 
 If you selected an "Add" or "Update" option ("Delete" coming soon), follow the prompts as they appear. When you're done, you will be sent back to the main menu.
+
 <img src="./src/images/prompt-preview.png" width="350" />
 
 You can quit the app from the main menu by selecting the Exit option. You can quit at any time by pressing ```Ctrl```+```C``` (```^C``` on macOS).
