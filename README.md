@@ -1,5 +1,6 @@
 # Employee Tracker 
 ![license](https://img.shields.io/badge/license-MIT-green) ![issues](https://img.shields.io/github/issues-raw/labchild/note-taker) ![main version](https://img.shields.io/github/package-json/v/labchild/employee-tracker/main) ![develop version](https://img.shields.io/github/package-json/v/labchild/employee-tracker/develop)
+
 A command-line CMS to manage a company's employee database, using Node.js, Inquirer, and MySQL.
 
 ### Table of Contents
