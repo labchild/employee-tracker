@@ -30,7 +30,7 @@ npm i
 ##### 2 – Set up your database
 Make sure your MySQL database is running. Refer to the [documentation](https://dev.mysql.com/doc/refman/8.0/en/) or this [blog post](https://coding-boot-camp.github.io/full-stack/mysql/mysql-installation-guide) to learn how.
 
-Run the commands ``` source db/db.sql ```, then ``` source db/schema.sql ``` to create your employee database (the order is important). If you'd like to see examples entries, run ``` source db/seeds.sql ``` last.
+Run the commands ``` source db/db.sql ```, then ``` source db/schema.sql ``` to create your employee database (the order is important). If you'd like to see examples entries, run ``` source db/seeds.sql ``` last. <strong>Only do this once</strong>, when you install the project. Running these commands will reset your database. This is irreversible.
 
 Your database is now set up and Employee Tracker is installed!
 
