@@ -1,8 +1,7 @@
 require('console.table');
-const inquirer = require('inquirer');
 const db = require('./lib/DB');
 const {
-    menu,
+    menuPrompts,
     departmentPrompts,
     rolePrompts,
     employeePrompts,
@@ -55,7 +54,6 @@ const showEmployeesByMananger = async () => {
 
 async function showEmployeesByDept() {
     const answer = await byDeptPrompts();
-    console.log(answer);
     const result = await db.getEmployeesByDept(answer);
 
     return result;
@@ -71,11 +69,11 @@ const addNewDept = () => {
             // if not add, notify user and return menu
             if (!result.affectedRows) {
                 myError();
-                return mainMenu(menu);
+                return mainMenu();
             }
             // notify user add is success, return to menu
             console.log(result.message);
-            return mainMenu(menu);
+            return mainMenu();
         })
         .catch(err => {
             myError();
@@ -94,11 +92,11 @@ const addNewRole = () => {
             // if not added, error and send back to menu
             if (!result.affectedRows) {
                 myError();
-                return mainMenu(menu);
+                return mainMenu();
             }
             // tell user add was success, return menu
             console.log(result.message);
-            return mainMenu(menu);
+            return mainMenu();
         })
         .catch(err => {
             myError();
@@ -116,11 +114,11 @@ const addNewEmployee = () => {
             // is failed, tell the user and send to menu
             if (!result.affectedRows) {
                 myError();
-                return mainMenu(menu);
+                return mainMenu();
             }
             // is success, tell user and send to menu
             console.log(result.message);
-            return mainMenu(menu);
+            return mainMenu();
         })
         .catch(err => {
             myError();
@@ -139,11 +137,11 @@ const updateEmployeeRole = () => {
             // if nothing happened, tell user and return to menu
             if (!result.affectedRows) {
                 myError();
-                return mainMenu(menu);
+                return mainMenu();
             }
             // tell user update is success, return menu
             console.log(result.message);
-            return mainMenu(menu);
+            return mainMenu();
         })
         .catch(err => {
             myError();
@@ -161,11 +159,11 @@ const updateManager = () => {
             // if nothing happened, tell user and return to menu
             if (!result.affectedRows) {
                 myError();
-                return mainMenu(menu);
+                return mainMenu();
             }
             // tell user update is success, return menu
             console.log(result.message);
-            return mainMenu(menu);
+            return mainMenu();
         })
         .catch(err => {
             myError();
@@ -174,51 +172,47 @@ const updateManager = () => {
 };
 
 // main menu
-const mainMenu = (questions) => {
+const mainMenu = () => {
     console.log(`
     
           Menu  
          ¯¯¯¯¯¯
     `)
-    return inquirer.prompt(questions)
+    return menuPrompts()
         .then(answer => {
             let userChoice = answer.menu;
 
             switch (userChoice) {
                 case 'allDept':
-                    showAllDepts().then(data => {
-                        console.log(space);
-                        console.table('Departments', data);
-                        mainMenu(menu);
-                    });
-                    break;
+                    return showAllDepts()
+                        .then(data => {
+                            console.log(space);
+                            console.table('Departments', data);
+                        }).then(() => mainMenu());
                 case 'allRoles':
-                    showAllRoles().then(data => {
-                        console.log(space);
-                        console.table('Employee Roles', data);
-                        mainMenu(menu);
-                    });
-                    break;
+                    return showAllRoles()
+                        .then(data => {
+                            console.log(space);
+                            console.table('Employee Roles', data);
+                        }).then(() => mainMenu())
                 case 'allEmployees':
-                    showAllEmployees().then(data => {
-                        console.log(space);
-                        console.table('Employees', data);
-                        mainMenu(menu);
-                    });
-                    break;
+                    return showAllEmployees()
+                        .then(data => {
+                            console.log(space);
+                            console.table('All Employees', data);
+                        }).then(() => mainMenu());
                 case 'employeesByManager':
-                    showEmployeesByMananger().then(data => {
-                        console.log(space);
-                        console.table('Employees', data);
-                        return mainMenu(menu);
-                    })
-                    break;
+                    return showEmployeesByMananger()
+                        .then(data => {
+                            console.log(space);
+                            console.table('Team Employees', data);
+                        }).then(() => mainMenu());
                 case 'employeesByDept':
-                    showEmployeesByDept().then(data => {
-                        console.log(space);
-                        console.table('Employees', data);
-                        return mainMenu(menu);
-                    })
+                    return showEmployeesByDept()
+                        .then(data => {
+                            console.log(space);
+                            console.table('Department Employees', data);
+                        }).then(() => mainMenu());
                 case 'addDept':
                     addNewDept();
                     break;
@@ -254,9 +248,7 @@ const init = () => {
     ======================================================
     `);
     // call menu
-    mainMenu(menu);
+    mainMenu();
 };
 
 init();
-//showAllDepts().then(result => console.log(result))
-//db.getEmployeesByDept({ dept_id: 2 }).then(result => console.log(result));
